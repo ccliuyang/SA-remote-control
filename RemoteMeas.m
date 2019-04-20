@@ -22,7 +22,7 @@ function varargout = RemoteMeas(varargin)
 
 % Edit the above text to modify the response to help RemoteMeas
 
-% Last Modified by GUIDE v2.5 26-Jul-2018 21:20:11
+% Last Modified by GUIDE v2.5 19-Apr-2019 21:02:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -202,7 +202,7 @@ function pathselect_Callback(hObject, eventdata, handles)
 % hObject    handle to pathselect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-path = uigetdir;
+[file,path] = uigetfile('*.mat');
 if path
     set(handles.selectedpath,'String',path);
 end
@@ -252,8 +252,8 @@ function settings_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
-    global fieldFox;
-    fprintf(fieldFox,'INST "SA"');
+    %global fieldFox;
+    %fprintf(fieldFox,'INST "SA"');
     settings;
 catch
     set(handles.info,'String','设备未连接！');
@@ -1248,3 +1248,39 @@ function WLANinterval_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in togglebutton3.
+function start_toggle_Callback(hObject, eventdata, handles)
+% hObject    handle to togglebutton3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of togglebutton3
+handles.myTimer=timer('TimerFcn',@measure,'Period',1,'ExecutionMode','fixedRate');
+if get(hObject, 'Value')
+    set(hObject, 'String', '中止测量');
+    stop(handles.myTimer);
+    fprintf(fieldFox, '*CLS');
+    fprintf(fieldFox, 'FREQ:SPAN:FULL');
+else
+    set(hObject, 'String', '开始测量');
+    start(handles.myTimer);
+end
+
+function measure()
+    auto_meas;
+
+
+% --- Executes on button press in pushbutton56.
+function pushbutton56_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton56 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton57.
+function pushbutton57_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton57 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
