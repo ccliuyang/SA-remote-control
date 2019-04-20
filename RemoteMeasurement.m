@@ -1,35 +1,35 @@
-function varargout = RemoteMeas(varargin)
-% RemoteMeas MATLAB code for RemoteMeas.fig
-%      RemoteMeas, by itself, creates a new RemoteMeas or raises the existing
+function varargout = RemoteMeasurement(varargin)
+% RemoteMeasurement MATLAB code for RemoteMeasurement.fig
+%      RemoteMeasurement, by itself, creates a new RemoteMeasurement or raises the existing
 %      singleton*.
 %
-%      H = RemoteMeas returns the handle to a new RemoteMeas or the handle to
+%      H = RemoteMeasurement returns the handle to a new RemoteMeasurement or the handle to
 %      the existing singleton*.
 %
-%      RemoteMeas('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in RemoteMeas.M with the given input arguments.
+%      RemoteMeasurement('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in RemoteMeasurement.M with the given input arguments.
 %
-%      RemoteMeas('Property','Value',...) creates a new RemoteMeas or raises the
+%      RemoteMeasurement('Property','Value',...) creates a new RemoteMeasurement or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the RemoteMeas before RemoteMeas_OpeningFcn gets called.  An
+%      applied to the RemoteMeasurement before RemoteMeasurement_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to RemoteMeas_OpeningFcn via varargin.
+%      stop.  All inputs are passed to RemoteMeasurement_OpeningFcn via varargin.
 %
-%      *See RemoteMeas Options on GUIDE's Tools menu.  Choose "RemoteMeas allows only one
+%      *See RemoteMeasurement Options on GUIDE's Tools menu.  Choose "RemoteMeasurement allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help RemoteMeas
+% Edit the above text to modify the response to help RemoteMeasurement
 
-% Last Modified by GUIDE v2.5 19-Apr-2019 21:02:53
+% Last Modified by GUIDE v2.5 20-Apr-2019 16:07:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @RemoteMeas_OpeningFcn, ...
-                   'gui_OutputFcn',  @RemoteMeas_OutputFcn, ...
+                   'gui_OpeningFcn', @RemoteMeasurement_OpeningFcn, ...
+                   'gui_OutputFcn',  @RemoteMeasurement_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -43,15 +43,15 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before RemoteMeas is made visible.
-function RemoteMeas_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before RemoteMeasurement is made visible.
+function RemoteMeasurement_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to RemoteMeas (see VARARGIN)
+% varargin   command line arguments to RemoteMeasurement (see VARARGIN)
 
-% Choose default command line output for RemoteMeas
+% Choose default command line output for RemoteMeasurement
 handles.output = hObject;
 
 % Update handles structure
@@ -61,11 +61,11 @@ img = imread('starter.png');
 axes(handles.axes1);
 imshow(img);
 
-% UIWAIT makes RemoteMeas wait for user response (see UIRESUME)
+% UIWAIT makes RemoteMeasurement wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 % --- Outputs from this function are returned to the command line.
-function varargout = RemoteMeas_OutputFcn(hObject, eventdata, handles) 
+function varargout = RemoteMeasurement_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -144,12 +144,11 @@ function screenshot_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
-    global fieldFox;
-    screenshot(fieldFox);
+    %global fieldFox;
+    %screenshot(fieldFox);
     axis off;
-    screen = imread('temp.png');
     axes(handles.axes1);
-    imshow(screen);
+    imshow('temp.png');
 catch
     set(handles.info,'String','设备未连接！');
 end
@@ -254,7 +253,7 @@ function settings_Callback(hObject, eventdata, handles)
 try
     %global fieldFox;
     %fprintf(fieldFox,'INST "SA"');
-    settings;
+    custom;
 catch
     set(handles.info,'String','设备未连接！');
 end
@@ -277,7 +276,7 @@ try
     plot(m,'ro-');
     hold on;
     plot(a,'bo-');
-    title('FDD-LTE 基站辐射历史数据');
+    title('FDD-LTE 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
     hold off;
@@ -438,11 +437,13 @@ try
     a = plotdata(:,2);
     amax = roundn(max(a),-4);
     amin = roundn(min(a),-4);
+    %axis off;
+    %axes(handles.axes1);
     figure;
     plot(m,'ro-');
     hold on;
     plot(a,'bo-');
-    title('GSM 基站辐射历史数据');
+    title('GSM 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
     hold off;
@@ -603,11 +604,14 @@ try
     a = plotdata(:,2);
     amax = roundn(max(a),-4);
     amin = roundn(min(a),-4);
-    figure;
+    axis off;
+    axes(handles.axes1);
+    imshow('white.png');
+    axes(handles.axes2);
     plot(m,'ro-');
     hold on;
     plot(a,'bo-');
-    title('CDMA 基站辐射历史数据');
+    title('CDMA 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
     hold off;
@@ -772,7 +776,7 @@ try
     plot(m,'ro-');
     hold on;
     plot(a,'bo-');
-    title('WCDMA 基站辐射历史数据');
+    title('WCDMA 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
     hold off;
@@ -937,7 +941,7 @@ try
     plot(m,'ro-');
     hold on;
     plot(a,'bo-');
-    title('TD-LTE 基站辐射历史数据');
+    title('TD-LTE 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
     hold off;
@@ -1102,7 +1106,7 @@ try
     plot(m,'ro-');
     hold on;
     plot(a,'bo-');
-    title('WLAN 辐射历史数据');
+    title('WLAN 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
     hold off;
@@ -1284,3 +1288,12 @@ function pushbutton57_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton57 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function axes2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to axes2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate axes2

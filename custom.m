@@ -1,35 +1,35 @@
-function varargout = settings(varargin)
-% SETTINGS MATLAB code for settings.fig
-%      SETTINGS, by itself, creates a new SETTINGS or raises the existing
+function varargout = custom(varargin)
+% CUSTOM MATLAB code for custom.fig
+%      CUSTOM, by itself, creates a new CUSTOM or raises the existing
 %      singleton*.
 %
-%      H = SETTINGS returns the handle to a new SETTINGS or the handle to
+%      H = CUSTOM returns the handle to a new CUSTOM or the handle to
 %      the existing singleton*.
 %
-%      SETTINGS('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SETTINGS.M with the given input arguments.
+%      CUSTOM('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in CUSTOM.M with the given input arguments.
 %
-%      SETTINGS('Property','Value',...) creates a new SETTINGS or raises the
+%      CUSTOM('Property','Value',...) creates a new CUSTOM or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before settings_OpeningFcn gets called.  An
+%      applied to the GUI before custom_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to settings_OpeningFcn via varargin.
+%      stop.  All inputs are passed to custom_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help settings
+% Edit the above text to modify the response to help custom
 
-% Last Modified by GUIDE v2.5 20-Apr-2019 15:05:20
+% Last Modified by GUIDE v2.5 20-Apr-2019 15:38:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @settings_OpeningFcn, ...
-                   'gui_OutputFcn',  @settings_OutputFcn, ...
+                   'gui_OpeningFcn', @custom_OpeningFcn, ...
+                   'gui_OutputFcn',  @custom_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,26 +44,26 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before settings is made visible.
-function settings_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before custom is made visible.
+function custom_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to settings (see VARARGIN)
+% varargin   command line arguments to custom (see VARARGIN)
 
-% Choose default command line output for settings
+% Choose default command line output for custom
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes settings wait for user response (see UIRESUME)
+% UIWAIT makes custom wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = settings_OutputFcn(hObject, eventdata, handles) 
+function varargout = custom_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
