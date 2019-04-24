@@ -96,10 +96,14 @@ function disconnect_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 try
     global fieldFox;
+    choice = questdlg('是否关闭设备？','关闭对话框','是','否','否');
+    if strcmp(choice, '是')
+        fprintf(fieldFox, 'SYST:PWR:SHUT:DLY 5');
+    end
     disconnect(fieldFox);
     set(handles.info,'String','断开成功！');
 catch
-    set(handles.info,'String','设备已断开，请勿重复操作！');
+    set(handles.info,'String','设备未连接！');
 end
 
 % --- Executes on button press in savescreen.
