@@ -22,7 +22,7 @@ function varargout = RemoteMeasurement(varargin)
 
 % Edit the above text to modify the response to help RemoteMeasurement
 
-% Last Modified by GUIDE v2.5 20-Apr-2019 17:08:01
+% Last Modified by GUIDE v2.5 06-May-2019 21:59:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -106,27 +106,16 @@ catch
     set(handles.info,'String','设备未连接！');
 end
 
-% --- Executes on button press in savescreen.
-function savescreen_Callback(hObject, eventdata, handles)
-% hObject    handle to savescreen (see GCBO)
+% --- Executes on button press in clac_d.
+function clac_d_Callback(hObject, eventdata, handles)
+% hObject    handle to clac_d (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
-    global fieldFox;
-    path = get(handles.selectedpath,'String');
-    save_screen(fieldFox,path);
-    if path
-        set(handles.info,'String',['成功保存屏幕到 ',path]);
-    else
-        set(handles.info,'String','成功保存屏幕到当前目录');
-    end
-catch
-    set(handles.info,'String','设备未连接！');
-end
+CalcDutyCycle;
 
-% --- Executes on button press in savedata.
-function savedata_Callback(hObject, eventdata, handles)
-% hObject    handle to savedata (see GCBO)
+% --- Executes on button press in calc_e_avg.
+function calc_e_avg_Callback(hObject, eventdata, handles)
+% hObject    handle to calc_e_avg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
@@ -142,14 +131,14 @@ catch
     set(handles.info,'String','设备未连接！');
 end
 
-% --- Executes on button press in screenshot.
-function screenshot_Callback(hObject, eventdata, handles)
-% hObject    handle to screenshot (see GCBO)
+% --- Executes on button press in screen_status.
+function screen_status_Callback(hObject, eventdata, handles)
+% hObject    handle to screen_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
     %global fieldFox;
-    %screenshot(fieldFox);
+    %screen_status(fieldFox);
     axis off;
     axes(handles.axes1);
     imshow('temp.png');
@@ -200,12 +189,12 @@ catch
     set(handles.info,'String','设备未连接！');
 end
 
-% --- Executes on button press in pathselect.
-function pathselect_Callback(hObject, eventdata, handles)
-% hObject    handle to pathselect (see GCBO)
+% --- Executes on button press in selectpath.
+function selectpath_Callback(hObject, eventdata, handles)
+% hObject    handle to selectpath (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[file,path] = uigetfile('*.mat');
+path = uigetdir();
 if path
     set(handles.selectedpath,'String',path);
 end
@@ -230,9 +219,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --- Executes on button press in saveall.
-function saveall_Callback(hObject, eventdata, handles)
-% hObject    handle to saveall (see GCBO)
+% --- Executes on button press in result_analysis.
+function result_analysis_Callback(hObject, eventdata, handles)
+% hObject    handle to result_analysis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
@@ -255,8 +244,8 @@ function settings_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
-    %global fieldFox;
-    %fprintf(fieldFox,'INST "SA"');
+    global fieldFox;
+    fprintf(fieldFox,'INST "SA"');
     custom;
 catch
     set(handles.info,'String','设备未连接！');
@@ -614,7 +603,7 @@ try
     axes(handles.axes2);
     plot(m,'ro-');
     hold on;
-    plot(a,'bo-');
+    plot(a,'b*-');
     title('CDMA 电磁辐射历史数据');
     ylabel('E (V/m)');
     legend('最大辐射值','平均辐射值');
@@ -1257,42 +1246,17 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-% --- Executes on button press in togglebutton3.
-function start_toggle_Callback(hObject, eventdata, handles)
-% hObject    handle to togglebutton3 (see GCBO)
+% --- Executes on button press in battery_status.
+function battery_status_Callback(hObject, eventdata, handles)
+% hObject    handle to battery_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of togglebutton3
-handles.myTimer=timer('TimerFcn',@measure,'Period',1,'ExecutionMode','fixedRate');
-if get(hObject, 'Value')
-    set(hObject, 'String', '中止测量');
-    stop(handles.myTimer);
-    fprintf(fieldFox, '*CLS');
-    fprintf(fieldFox, 'FREQ:SPAN:FULL');
-else
-    set(hObject, 'String', '开始测量');
-    start(handles.myTimer);
-end
-
-function measure()
-    auto_meas;
-
-
-% --- Executes on button press in pushbutton56.
-function pushbutton56_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton56 (see GCBO)
+% --- Executes on button press in connect_status.
+function connect_status_Callback(hObject, eventdata, handles)
+% hObject    handle to connect_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton57.
-function pushbutton57_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton57 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 
 % --- Executes during object creation, after setting all properties.
 function axes2_CreateFcn(hObject, eventdata, handles)
@@ -1300,4 +1264,3 @@ function axes2_CreateFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-% Hint: place code in OpeningFcn to populate axes2
