@@ -1,4 +1,4 @@
-function save_data(fieldFox,path)
+function save_csv(fieldFox,path)
     if nargin == 1
         path = '';
     end

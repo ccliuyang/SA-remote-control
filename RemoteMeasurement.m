@@ -22,7 +22,7 @@ function varargout = RemoteMeasurement(varargin)
 
 % Edit the above text to modify the response to help RemoteMeasurement
 
-% Last Modified by GUIDE v2.5 06-May-2019 21:59:48
+% Last Modified by GUIDE v2.5 07-May-2019 22:13:16
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -58,8 +58,12 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 img = imread('starter.png');
-axes(handles.axes1);
+axes(handles.pic_area);
 imshow(img);
+global savepath;
+global savetype;
+savepath = '';
+savetype = [0, 1, 0];
 
 % UIWAIT makes RemoteMeasurement wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -74,6 +78,28 @@ javaFrame = get(gcf,'JavaFrame');
 set(javaFrame,'Maximized',1); 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+
+
+function setip_Callback(hObject, eventdata, handles)
+% hObject    handle to setip (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of setip as text
+%        str2double(get(hObject,'String')) returns contents of setip as a double
+set(handles.info,'String',['成功修改设备IP为 ',get(hObject,'String'),'！']);
+
+% --- Executes during object creation, after setting all properties.
+function setip_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to setip (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 % --- Executes on button press in connect.
 function connect_Callback(hObject, eventdata, handles)
@@ -106,30 +132,19 @@ catch
     set(handles.info,'String','设备未连接！');
 end
 
-% --- Executes on button press in clac_d.
-function clac_d_Callback(hObject, eventdata, handles)
-% hObject    handle to clac_d (see GCBO)
+% --- Executes on button press in connect_status.
+function connect_status_Callback(hObject, eventdata, handles)
+% hObject    handle to connect_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-CalcDutyCycle;
 
-% --- Executes on button press in calc_e_avg.
-function calc_e_avg_Callback(hObject, eventdata, handles)
-% hObject    handle to calc_e_avg (see GCBO)
+
+% --- Executes on button press in battery_status.
+function battery_status_Callback(hObject, eventdata, handles)
+% hObject    handle to battery_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
-    global fieldFox;
-    path = get(handles.selectedpath,'String');
-    save_data(fieldFox,path);
-    if path
-        set(handles.info,'String',['成功保存数据到 ',path]);
-    else
-        set(handles.info,'String','成功保存数据到当前目录');
-    end
-catch
-    set(handles.info,'String','设备未连接！');
-end
+
 
 % --- Executes on button press in screen_status.
 function screen_status_Callback(hObject, eventdata, handles)
@@ -137,54 +152,54 @@ function screen_status_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
-    %global fieldFox;
-    %screen_status(fieldFox);
+    global fieldFox;
+    screenshot(fieldFox);
     axis off;
-    axes(handles.axes1);
+    axes(handles.pic_area);
     imshow('temp.png');
 catch
     set(handles.info,'String','设备未连接！');
 end
 
 % --- Executes during object creation, after setting all properties.
-function axes1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to axes1 (see GCBO)
+function pic_area_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pic_area (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-% Hint: place code in OpeningFcn to populate axes1
+% Hint: place code in OpeningFcn to populate pic_area
 axis off;
 
-function setip_Callback(hObject, eventdata, handles)
-% hObject    handle to setip (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of setip as text
-%        str2double(get(hObject,'String')) returns contents of setip as a double
-set(handles.info,'String',['成功修改设备IP为 ',get(hObject,'String'),'！']);
-
 % --- Executes during object creation, after setting all properties.
-function setip_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to setip (see GCBO)
+function plot_area_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to plot_area (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
-% --- Executes on button press in automeas.
-function automeas_Callback(hObject, eventdata, handles)
-% hObject    handle to automeas (see GCBO)
+% --- Executes on button press in savedata.
+function savedata_Callback(hObject, eventdata, handles)
+% hObject    handle to savedata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
     global fieldFox;
-    fprintf(fieldFox,'INST "SA"');
-    automeas;
+    global savepath;
+    global savetype;
+    if savetype(1)
+        save_sta(fieldFox,savepath);
+    end
+    if savetype(2)
+        save_csv(fieldFox,savepath);
+    end
+    if savetype(3)
+        save_png(fieldFox,savepath);
+    end
+    if savepath
+        set(handles.info,'String',['成功保存到 ',savepath]);
+    else
+        set(handles.info,'String','成功保存到当前目录');
+    end
 catch
     set(handles.info,'String','设备未连接！');
 end
@@ -197,6 +212,9 @@ function selectpath_Callback(hObject, eventdata, handles)
 path = uigetdir();
 if path
     set(handles.selectedpath,'String',path);
+    global savepath;
+    savepath = path;
+    set(handles.info,'String',['当前存储路径为 ',savepath]);
 end
 
 function selectedpath_Callback(hObject, eventdata, handles)
@@ -206,6 +224,9 @@ function selectedpath_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of selectedpath as text
 %        str2double(get(hObject,'String')) returns contents of selectedpath as a double
+global savepath;
+savepath = get(hObject,'String');
+set(handles.info,'String',['当前存储路径为 ',savepath]);
 
 % --- Executes during object creation, after setting all properties.
 function selectedpath_CreateFcn(hObject, eventdata, handles)
@@ -219,24 +240,26 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+% --- Executes on button press in clac_d.
+function clac_d_Callback(hObject, eventdata, handles)
+% hObject    handle to clac_d (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+CalcDutyCycle;
+
+% --- Executes on button press in calc_e_avg.
+function calc_e_avg_Callback(hObject, eventdata, handles)
+% hObject    handle to calc_e_avg (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+CalcAvgE;
+
 % --- Executes on button press in result_analysis.
 function result_analysis_Callback(hObject, eventdata, handles)
 % hObject    handle to result_analysis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
-    global fieldFox;
-    path = get(handles.selectedpath,'String');
-    save_data(fieldFox,path);
-    save_screen(fieldFox,path);
-    if path
-        set(handles.info,'String',['成功保存到 ',path]);
-    else
-        set(handles.info,'String','成功保存到当前目录');
-    end
-catch
-    set(handles.info,'String','设备未连接！');
-end
+
 
 % --- Executes on button press in settings.
 function settings_Callback(hObject, eventdata, handles)
@@ -329,7 +352,7 @@ if tstring
             screenshot(fieldFox);
             axis off;
             screen = imread('temp.png');
-            axes(handles.axes1);
+            axes(handles.pic_area);
             imshow(screen);
             set(handles.FDDLTEresult,'String',['最大辐射值为：',num2str(maximum),'V/m',10,'平均辐射值为：',num2str(avg),'V/m']);
             history{4} = [history{4};maximum,avg];
@@ -431,7 +454,7 @@ try
     amax = roundn(max(a),-4);
     amin = roundn(min(a),-4);
     %axis off;
-    %axes(handles.axes1);
+    %axes(handles.pic_area);
     figure;
     plot(m,'ro-');
     hold on;
@@ -496,7 +519,7 @@ if tstring
             screenshot(fieldFox);
             axis off;
             screen = imread('temp.png');
-            axes(handles.axes1);
+            axes(handles.pic_area);
             imshow(screen);
             set(handles.GSMresult,'String',['最大辐射值为：',num2str(maximum),'V/m',10,'平均辐射值为：',num2str(avg),'V/m']);
             history{1} = [history{1};maximum,avg];
@@ -598,9 +621,9 @@ try
     amax = roundn(max(a),-4);
     amin = roundn(min(a),-4);
     axis off;
-    axes(handles.axes1);
+    axes(handles.pic_area);
     imshow('white.png');
-    axes(handles.axes2);
+    axes(handles.plot_area);
     plot(m,'ro-');
     hold on;
     plot(a,'b*-');
@@ -664,7 +687,7 @@ if tstring
             screenshot(fieldFox);
             axis off;
             screen = imread('temp.png');
-            axes(handles.axes1);
+            axes(handles.pic_area);
             imshow(screen);
             set(handles.CDMAresult,'String',['最大辐射值为：',num2str(maximum),'V/m',10,'平均辐射值为：',num2str(avg),'V/m']);
             history{2} = [history{2};maximum,avg];
@@ -829,7 +852,7 @@ if tstring
             screenshot(fieldFox);
             axis off;
             screen = imread('temp.png');
-            axes(handles.axes1);
+            axes(handles.pic_area);
             imshow(screen);
             set(handles.WCDMAresult,'String',['最大辐射值为：',num2str(maximum),'V/m',10,'平均辐射值为：',num2str(avg),'V/m']);
             history{3} = [history{3};maximum,avg];
@@ -994,7 +1017,7 @@ if tstring
             screenshot(fieldFox);
             axis off;
             screen = imread('temp.png');
-            axes(handles.axes1);
+            axes(handles.pic_area);
             imshow(screen);
             set(handles.TDLTEresult,'String',['最大辐射值为：',num2str(maximum),'V/m',10,'平均辐射值为：',num2str(avg),'V/m']);
             history{5} = [history{5};maximum,avg];
@@ -1159,7 +1182,7 @@ if tstring
             screenshot(fieldFox);
             axis off;
             screen = imread('temp.png');
-            axes(handles.axes1);
+            axes(handles.pic_area);
             imshow(screen);
             set(handles.WLANresult,'String',['最大辐射值为：',num2str(maximum),'V/m',10,'平均辐射值为：',num2str(avg),'V/m']);
             history{6} = [history{6};maximum,avg];
@@ -1245,22 +1268,3 @@ function WLANinterval_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-% --- Executes on button press in battery_status.
-function battery_status_Callback(hObject, eventdata, handles)
-% hObject    handle to battery_status (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% --- Executes on button press in connect_status.
-function connect_status_Callback(hObject, eventdata, handles)
-% hObject    handle to connect_status (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% --- Executes during object creation, after setting all properties.
-function axes2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to axes2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-

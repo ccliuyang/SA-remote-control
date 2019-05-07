@@ -1,4 +1,4 @@
-function save_screen(fieldFox,path)
+function save_png(fieldFox,path)
     if nargin == 1
         path = '';
     end
@@ -8,9 +8,9 @@ function save_screen(fieldFox,path)
     time = get_time;
     fprintf(fieldFox, ['MMEM:STOR:IMAG "',time,'.png"']);
     fprintf(fieldFox, ['MMEM:DATA? "',time,'.png"']);
-    img = binblockread(fieldFox,'uint8');
+    png = binblockread(fieldFox,'uint8');
     fread(fieldFox,1);
     fid = fopen([path,time,'.png'],'w');
-    fwrite(fid,img,'uint8');
+    fwrite(fid,png,'uint8');
     fclose(fid);
     fprintf(fieldFox, ['MMEM:DEL "',time,'.png"']);
