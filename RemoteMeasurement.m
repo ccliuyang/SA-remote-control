@@ -79,6 +79,36 @@ set(javaFrame,'Maximized',1);
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
+function fieldFox = connect(ip)
+    if nargin == 0
+        ip = '192.168.1.105';
+    end
+    instrreset;
+    oldobjs = instrfind;
+    if (~isempty(oldobjs))
+        fclose(oldobjs);
+        delete(oldobjs);
+    end
+    clear oldobjs;
+    fieldFox = tcpip(ip,5025);
+    set(fieldFox,'InputBufferSize', 640000);
+    set(fieldFox,'OutputBufferSize', 640000);
+    fopen(fieldFox);
+    fprintf(fieldFox, '*CLS');
+    fprintf(fieldFox,'INST "SA"');
+
+function disconnect(fieldFox)
+    fclose(fieldFox);
+    delete(fieldFox);
+    clear fieldFox;
+
+function offline = connection(equipment)
+    try
+        fprintf(equipment,'INST "SA"');
+        offline = 0;
+    catch
+        offline = 1;
+    end
 
 function setip_Callback(hObject, eventdata, handles)
 % hObject    handle to setip (see GCBO)
@@ -137,28 +167,66 @@ function connect_status_Callback(hObject, eventdata, handles)
 % hObject    handle to connect_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+global fieldFox;
+offline = connection(fieldFox);
+if offline
+    set(handles.info,'String','连接断开，正在自动重连！');
+    try
+        fieldFox = connect(get(handles.setip,'String'));
+    catch
+        set(handles.info,'String','第1次重连失败，马上进行第2次重连！');
+        try
+            fieldFox = connect(get(handles.setip,'String'));
+        catch
+            set(handles.info,'String','第2次重连失败，马上进行第3次重连！');
+            try
+                fieldFox = connect(get(handles.setip,'String'));
+            catch
+                set(handles.info,'String','第3次重连失败，请检查网络！');
+            end
+        end
+    end
+else
+    set(handles.info,'String','连接正常！');
+end
 
 % --- Executes on button press in battery_status.
 function battery_status_Callback(hObject, eventdata, handles)
 % hObject    handle to battery_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+global fieldFox;
+fprintf(fieldFox, 'SYST:BATT:ABSC?');
+b_remain = fscanf(fieldFox);
+fprintf(fieldFox, 'SYST:BATT:ARTT?');
+t_remain = fscanf(fieldFox);
+if b_remain < 0.1
+    fprintf(fieldFox, 'SYST:PWR:SHUT:DLY 5');
+elseif b_remain < 0.2
+    set(handles.info,'String',['电量过低！预计', num2str(t_remain) ,'分钟后电量耗尽！']);
+end
 
 % --- Executes on button press in screen_status.
 function screen_status_Callback(hObject, eventdata, handles)
 % hObject    handle to screen_status (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
-    global fieldFox;
-    screenshot(fieldFox);
+global fieldFox;
+offline = connection(fieldFox);
+if offline
+    set(handles.info,'String','设备未连接！');
+end
+if get(hObject, 'Value')
+    set(hObject, 'String', '停止数据监控');
     axis off;
     axes(handles.pic_area);
-    imshow('temp.png');
-catch
-    set(handles.info,'String','设备未连接！');
+    while get(hObject, 'Value')
+        screenshot(fieldFox);
+        imshow('temp.png');
+        pause(0.5);
+    end
+else
+    set(hObject, 'String', '实时数据监控')
 end
 
 % --- Executes during object creation, after setting all properties.
